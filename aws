@@ -1,0 +1,41 @@
+Para crear una instancia.
+
+Agregar nombre: 
+Seleccionar el sistema operativo: 
+Crear nuevo par de claves, no hay que perder la clave y que se guarde el archivo descargado ya que sera utilizado.
+Tipo de clave rsa, seleccionar.pem  (Bebeate21#) <- contraseña mia
+En config de red, hay que habilitar asignar automaticamente la ip publica.
+Seleccionar un grupo de segurudad existente y usar el default.
+
+Ver panel, instancia y que este inicializando. 
+Ver que nuestro grupo de seguridad tenga las reglas correspondeintes o crear una, voy a panel, grupos de seguridad
+nombre de grupo, tienen regla de entrada y salida 
+agregar regla en tcp perzoanlizado, seleccionar todo el treafico
+el origen, anywahe edicion 4 (para ponder tener concetividad con cualquier trefico)
+guardar regla
+
+para conectar 
+se seleciona el id, y al cosntado dice conectar, nos conecta
+
+mos por ssh 
+el archivo de seguridad que se descarga, vamos a la rita y escribimos powershwll para abrir 
+
+la opcion -i, es para ver que claves vamos a usar 
+en el ssh nos vamos donde dice ejemplo y al abrir el power shel coppiamos eso y nos abre el linux.
+
+
+estas web tienen una ip puclica
+
+nic.cl, daniel.cl y ahi apuntamos a la ip publica 
+piwershell
+pwd
+ls (para ennumerar los directorios y archibvos dentro de la carpeta)
+cd.. (para volver hacia atras)
+cd (para avanzar hacia dentro de las carpetas)
+pwd (para saber donde esstoy)
+cd.. vuelvo atras
+ls 8entro al esqueleto de linux y me muetra todas la optiones que hay 
+cat (se usa para leer archivos), cat espacio porque cat es la herramneita ->/etc/passwd (para ver donde se encuentra la raiz de los archivos. 
+
+con sudo su queda como admin privilegiado 
+markdown 
