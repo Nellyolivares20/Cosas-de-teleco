@@ -1,0 +1,14 @@
+Wan 
+Ospf
+Ospf es un protocolo de  routing de estado de enlace desarrolado como alternativa del protocolo de routing por vecot de distancia.
+Los rt que ejecutan ospef intercambian mensajes para transmitir informacion de rt, atraves de 5 tipos de paquetes.
+-paquete de saludo
+-p de descripciom de la bas e de datos
+3 tipos de base de daros:
+tabla de vecionos: lista de rt vecinos con quien establecio comunicacion bidireccioanl. se usa "show ip ospf neighbor.
+-base de topo: muestra info  sobre todos lllos otros,  "show ip ospf database"
+-tabla de routing: Lista de rutas generdas.
+componentes de ospf:
+el algortimo del ospf es buscar la ruta mas corta, es como la raiza de un arbol:
+las tablas de enrutamiento si es.
+Ospf v3
