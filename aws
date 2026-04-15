@@ -112,3 +112,8 @@ sudo nano mysqld.cnf: Editar el archivo.
 
 
 htop: Para ver el rendimiento de lapgaina a traves de linux.
+
+sudo systemctl restart apache2: para refrescar la web 
+cat /var/www/html/index.php: para ver el codigo y copiarlo
+sudo nano /var/www/html/index.php: para editar el codigo
+sudo rm /var/www/html/index.php: para borrar cod
