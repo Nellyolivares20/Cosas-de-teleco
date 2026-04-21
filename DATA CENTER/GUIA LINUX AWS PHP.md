@@ -157,4 +157,4 @@ El corazón de la página reside en `/var/www/html/`.
 
 ---
 
-_Documento generado como guía interna para el proyecto **Central Alameda**._
+
