@@ -4,7 +4,7 @@
 > **Carrera:** Ingeniería en Telecomunicaciones, Conectividad y Redes  
 > **Instituto:** INACAP  
 > **Docente:** Daniel Ruz Moreno  
-
+> **Alumna:** Nelly Antinao Olivares
 ---
 
 ## 📋 Descripción del Proyecto
@@ -49,7 +49,7 @@ Despliegue de una infraestructura de red híbrida sobre **Amazon Web Services (A
 
 | Nombre | SO | Tipo | Rol |
 |--------|-----|------|-----|
-| WNServerAdmin | Windows Server 2022 | m7i-flex.large | Domain Controller |
+| WNServerAdmin | Windows Server 2022 | m7i-flex.large (8 RAM) | Domain Controller |
 | ClientePrueba | Windows 11 | m7i-flex.large | Cliente del dominio |
 | Ansible | Ubuntu 24.04 | m7i-flex.large | TVHeadend + NellyTV |
 
@@ -107,16 +107,16 @@ Abrir **Active Directory Users and Computers** → Tools:
 ServerNelly.com
 ├── 📁 Ventas
 │   ├── 👥 G_Ventas (Grupo de Seguridad Global)
-│   ├── 👤 daniel  → Contraseña: Inacap.2026
-│   └── 👤 maria   → Contraseña: Inacap.2026
+│   ├── 👤 daniel  → Contraseña: Inacap2026#
+│   └── 👤 maria   → Contraseña: Inacap2026#
 ├── 📁 TI
 │   ├── 👥 G_TI (Grupo de Seguridad Global)
-│   ├── 👤 carlos  → Contraseña: Inacap.2026
-│   └── 👤 javiera → Contraseña: Inacap.2026
+│   ├── 👤 carlos  → Contraseña: Inacap2026#
+│   └── 👤 javiera → Contraseña: Inacap2026#
 └── 📁 Administracion
     ├── 👥 G_Administracion (Grupo de Seguridad Global)
-    ├── 👤 pedro   → Contraseña: Inacap.2026
-    └── 👤 camila  → Contraseña: Inacap.2026
+    ├── 👤 pedro   → Contraseña: Inacap2026#
+    └── 👤 camila  → Contraseña: Inacap2026#
 ```
 
 ### 1.4 Crear Unidades Organizativas (UOs)
@@ -255,7 +255,7 @@ Add-Computer -DomainName "ServerNelly.com" -Credential (Get-Credential) -Restart
 
 Credenciales:
 - Usuario: `Administrator`
-- Contraseña: `Inacap.2026!`
+- Contraseña: `Inacap2026#`
 
 ### 3.4 Habilitar RDP para usuarios del dominio
 
@@ -269,7 +269,7 @@ Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
 ```
 Login: SERVERNELLY\daniel
-Password: Inacap.2026
+Password: Inacap2026#
 ```
 
 **Resultado esperado:**
@@ -698,59 +698,17 @@ http://IP_PUBLICA
 |---------|-----------|-----|
 | tv | lascochinas123 | Usuario principal |
 | admin | inacap | Administrador |
-| daniel | Inacap.2026 | Usuario dominio |
+| daniel | Inacap2026#| Usuario dominio |
 
 ---
 
-## ✅ Checklist Final de Evaluación
 
-| Criterio | Descripción | Estado |
-|----------|-------------|--------|
-| 2.1.1 Tipos de instalación | 3 instancias EC2 desplegadas en AWS | ✅ |
-| 2.1.2 Tareas automatizadas | Playbook Ansible con TVHeadend, Firewall y SSH | ✅ |
-| 2.1.3 Gestión de virtualización | Infraestructura cloud AWS operativa | ✅ |
-| 2.1.4 Gestión de configuraciones | AD + GPOs + Usuarios + Firewall | ✅ |
-| Ejecución y defensa | Portal NellyTV funcional | ✅ |
-
----
-
-## 📂 Estructura del Repositorio
-
-```
-📁 proyecto-tvheadend/
-├── 📄 README.md          ← Este archivo
-├── 📄 hosts.ini          ← Inventario Ansible
-├── 📄 tvheadend.yml      ← Playbook principal
-└── 📁 portal/
-    ├── 📄 index.html     ← Portal NellyTV
-    └── 📄 proxy.php      ← Proxy para canales IPTV
-```
-
----
-
-## 🛠️ Tecnologías Utilizadas
-
-| Tecnología | Versión | Uso |
-|-----------|---------|-----|
-| AWS EC2 | - | Infraestructura cloud |
-| Ubuntu | 24.04 LTS | SO servidor Linux |
-| Windows Server | 2022 | Domain Controller |
-| Ansible | 2.17.14 | Automatización |
-| TVHeadend | 4.x (snap) | Servidor IPTV |
-| UFW | - | Firewall Linux |
-| Nginx | - | Servidor web |
-| PHP | 8.3.6 | Backend proxy |
-| HLS.js | latest | Reproductor video |
-| Active Directory | - | Gestión de usuarios |
-| WSL2 | 2.6.3.0 | Nodo control Ansible |
-
----
 
 ## 👩‍💻 Autora
 
-**Nelly** — Ingeniería en Telecomunicaciones, Conectividad y Redes  
+**Nelly Antinao Okivares** — Ingeniería en Telecomunicaciones, Conectividad y Redes  
 INACAP La Serena — 2026
 
 ---
 
-> *"La automatización no reemplaza al administrador, lo hace más eficiente."*
+
