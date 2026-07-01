@@ -304,7 +304,7 @@ ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 ---
 
-## ▶️ Comandos para la demo al profe
+## ▶️ Comandos 
 
 ### Verificar que el TFTP está activo
 ```bash
