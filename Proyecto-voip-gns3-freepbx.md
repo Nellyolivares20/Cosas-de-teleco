@@ -2,8 +2,6 @@
 
 Documentación completa del proyecto: topología con routers OSPF (MD5), switches con VLANs y port-security, un servidor FreePBX corriendo en Docker dentro de GNS3, y un softphone Zoiper conectado desde el host Linux (CachyOS).
 
----
-
 ## 1. Topología final
 
 ```
@@ -28,7 +26,6 @@ Documentación completa del proyecto: topología con routers OSPF (MD5), switche
 
 ## 2. Instalación de paquetes en CachyOS (Arch-based)
 
-```
 
 ### 2.2 Docker (para correr FreePBX)
 
@@ -102,13 +99,13 @@ FAIL2BAN_ENABLE=false
 SIP_NAT_IP=192.168.30.10 (<- la ip por la que saldra y se conectara)
 ```
 
-> `ADMIN_PASSWORD` es **obligatoria** — sin ella el contenedor no arranca (`ADMIN_PASSWORD is required`).
+> `ADMIN_PASSWORD` es **obligatoria**, sin la contraseña el contenedor no arranca.
 > `FAIL2BAN_ENABLE=false` evita un error de `iptables` (`can't initialize iptables table 'filter'`) que ocurre porque el kernel del host no tiene ciertos módulos cargados/porque el contenedor no corre en modo privilegiado con acceso a esas tablas.
 > `SIP_NAT_IP=192.168.30.10` evita que el script de arranque (`apply-initial-configs.sh`) intente hacer `curl ifconfig.me` para autodetectar la IP pública — cosa que falla si el contenedor no tiene salida real a internet (como es el caso aquí, aislado en la VLAN 30). El script solo hace ese curl si la variable viene vacía; si se la pasamos, la usa directamente.
 
 ### 4.3 Conectar el nodo al switch
 
-- Cablear `eth0` del contenedor al puerto de acceso VLAN 30 de SwGes-1.
+- Cablear `eth0` del contenedor al puerto de acceso VLAN 30 de SwGes-1 (Hay que crear el puerto para asignarle la ip)
 - No hace falta ninguna otra interfaz conectada a internet una vez configurada la variable `SIP_NAT_IP`.
 
 ### 4.4 Iniciar y verificar
@@ -141,8 +138,7 @@ ping -c 4 192.168.30.1                 # probar llegada al gateway (R2)
 exit
 ```
 
-> Esta IP se pierde si el contenedor se reinicia. Si quieres hacerla persistente, se puede automatizar con un script de post-arranque o agregándola al `startup.sh` de una imagen personalizada (ver sección 4.7).
-
+> Esta IP se pierde si el contenedor se reinicia y hay que volver a ingresar la ip.
 ### 4.6 Cómo encender y apagar el contenedor
 
 **Desde GNS3 (recomendado, mantiene el cableado de la topología):**
@@ -157,32 +153,15 @@ docker stop <container_id>   # apagar limpio
 docker restart <container_id>
 ```
 
-> ⚠️ **Nunca uses la consola telnet turquesa de GNS3** (la ventana que abre al hacer doble clic sobre el nodo Docker) para escribir comandos — esa consola está conectada a la salida estándar del proceso principal (`startup.sh`), no a una shell interactiva. Cualquier tecla que mandes ahí (incluso Enter) puede interpretarse como una señal y **matar el proceso** (código de salida 130 = SIGINT). Para entrar al contenedor, usa siempre `docker exec -it <id> bash` desde tu terminal normal.
-
-### 4.7 (Opcional) Crear una imagen personalizada sin dependencia de curl/internet
-
-Si prefieres no depender de la variable de entorno y modificar la imagen directamente:
-```bash
-docker run -it --name freepbx-fix --entrypoint bash flaviostutz/freepbx
-# dentro del contenedor:
-grep -rn "ifconfig.me" / --include="*.sh" 2>/dev/null
-# aparece: /apply-initial-configs.sh:34:  SIP_NAT_IP=$(curl ifconfig.me)
-sed -i 's/SIP_NAT_IP=$(curl ifconfig.me)/SIP_NAT_IP=192.168.30.10/' /apply-initial-configs.sh
-exit
-docker commit freepbx-fix freepbx-nointernet
-docker rm freepbx-fix
-```
-Y luego usar `freepbx-nointernet` como nombre de imagen en la plantilla de GNS3. (En la práctica, bastó con la variable de entorno `SIP_NAT_IP`, así que este paso es opcional.)
-
----
+> ⚠️ **Nunca uses la consola telnet turquesa de GNS3** (la ventana que abre al hacer doble clic sobre el nodo Docker) para escribir comandos esa consola está conectada a la salida estándar del proceso principal (`startup.sh`), no a una shell interactiva. Cualquier tecla que mandes ahí (incluso Enter) puede interpretarse como una señal y **matar el proceso** (código de salida 130 = SIGINT). Para entrar al contenedor, usa siempre `docker exec -it <id> bash` desde tu terminal normal.
 
 ## 5. Acceso al panel web de FreePBX y creación de extensiones
 
 ### 5.1 Acceder al panel
 
-Desde cualquier equipo con ruta hacia la VLAN 30 (por ejemplo tu Linux, una vez conectado con el Cloud/tap0 — ver sección 6):
+Desde cualquier equipo con ruta hacia la VLAN 30:
 ```
-http://192.168.30.10
+http://192.168.30.10 (IP asignada)
 ```
 
 ### 5.2 Asistente inicial ("Initial Setup")
@@ -202,21 +181,9 @@ http://192.168.30.10
 - **Secret**: contraseña SIP (se puede generar automática o poner una propia).
 - **Submit** → luego **Apply Config** (botón rojo arriba; sin esto los cambios quedan guardados en base de datos pero Asterisk no los carga).
 
-### 5.4 Prueba de audio sin necesitar una segunda extensión
-
-Desde cualquier softphone registrado, marcar:
-```
-*43
-```
-Es el test de eco integrado de FreePBX — si escuchas tu propia voz repetida, confirma que el audio RTP (no solo la señalización SIP) atraviesa correctamente toda la topología.
-
----
-
 ## 6. Conectar Zoiper (softphone) desde el host Linux
 
-### 6.1 Crear una interfaz virtual dedicada (más confiable que usar WiFi)
-
-Las interfaces WiFi normalmente **no permiten bridging** de otras MACs (limitación de 802.11), lo que provoca errores tipo `Source NIO listener thread for bridge0 ... Bad address`. Se resuelve usando una interfaz TAP dedicada:
+### 6.1 Crear una interfaz virtual dedicada (cloud)
 
 ```bash
 sudo ip tuntap add dev tap0 mode tap
@@ -244,26 +211,17 @@ ping 192.168.30.10    # FreePBX, a través de OSPF
 
 ### 6.4 Configurar la cuenta SIP en Zoiper
 
-Al abrir Zoiper por primera vez (o **Accounts > Add**), elegir configuración **manual** (no auto-config):
+Al abrir Zoiper por primera vez **Accounts > Add**, elegir configuración **manual** (no auto-config):
 
 | Campo | Valor |
 |---|---|
-| Usuario | `6005` (el User Extension creado en FreePBX) |
+| Usuario | `6005` (el User Extension creado en FreePBX) | (Elegir)
 | Contraseña | el Secret de esa extensión |
 | Dominio / Servidor / Host | `192.168.30.10` |
 | Puerto | `5060` |
 | Protocolo | SIP |
 
 Si aparece un warning de "¿saltar la autodetección y configurar manualmente?" → **Yes**.
-
-### 6.5 Errores comunes de registro y solución
-
-- **401 Unauthorized repetido**: es normal recibir un primer 401 (el protocolo SIP siempre pide autenticación), pero si se repite indefinidamente, la contraseña no coincide. Solución: copiar el **Secret** exacto desde el panel de FreePBX (icono de "ojo" para verlo en texto plano) y pegarlo directo en Zoiper, evitando errores de tipeo.
-- **Sin respuesta / "Destination Host Unreachable"**: revisar en orden:
-  1. `show interfaces trunk` en el switch correspondiente — el puerto hacia el router debe estar en modo trunk con la VLAN permitida (no en modo access/VLAN 1 por defecto).
-  2. `show spanning-tree vlan <n>` — el puerto debe estar en estado **FWD** (forwarding). Si está en LIS/LRN, esperar ~30-50 segundos a que converja STP.
-  3. `show vlan brief` — confirmar que la VLAN exista y esté activa.
-  4. `show ip interface brief` en el router — revisar que la IP de la subinterfaz esté bien escrita (¡cuidado con typos, ej. `168.168.10.1` en vez de `192.168.10.1`!).
 
 ---
 
@@ -358,7 +316,7 @@ ping -c 4 192.168.30.10             # probar FreePBX de punta a punta
 
 > Si `ip addr add` o `ip route add` dan error de "File exists" o "RTNETLINK answers: File exists", significa que ese dato ya estaba puesto — no es un error real, se puede ignorar y seguir probando el ping.
 
-### 8.4 Orden recomendado de verificación tras reabrir el proyecto
+### 8.4 Orden recomendado de verificación tras reabrir el lab:
 
 1. `show ip ospf neighbor` en cualquier router.
 2. `show interfaces status` en **ambos** switches — corregir VLANs de puertos de acceso si volvieron a VLAN 1.
